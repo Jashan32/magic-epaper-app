@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magicepaperapp/constants/color_constants.dart';
 import 'package:magicepaperapp/constants/dimens.dart';
 import 'package:magicepaperapp/l10n/app_localizations.dart';
@@ -45,14 +46,24 @@ class _ImageSaveDialogState extends State<ImageSaveDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: Dimens.dialogMaxWidth,
-          ),
-          child: Container(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
+          Navigator.of(context).pop();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: Dimens.dialogMaxWidth,
+            ),
+            child: Container(
             padding: const EdgeInsets.all(Dimens.spacingXxl),
             margin: const EdgeInsets.symmetric(vertical: 48),
             decoration: BoxDecoration(
@@ -82,6 +93,7 @@ class _ImageSaveDialogState extends State<ImageSaveDialog> {
                 ],
                 _buildActionButtons(context),
               ],
+            ),
             ),
           ),
         ),

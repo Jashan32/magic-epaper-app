@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magicepaperapp/constants/color_constants.dart';
 import 'package:magicepaperapp/constants/dimens.dart';
 import 'package:magicepaperapp/l10n/app_localizations.dart';
@@ -37,13 +38,23 @@ class _ImageRenameDialogState extends State<ImageRenameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: Dimens.dialogMaxWidth,
-        ),
-        child: Container(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
+          Navigator.of(context).pop();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: Dimens.dialogMaxWidth,
+          ),
+          child: Container(
           padding: const EdgeInsets.all(Dimens.spacingXxl),
           decoration: BoxDecoration(
             color: colorWhite,
@@ -66,6 +77,7 @@ class _ImageRenameDialogState extends State<ImageRenameDialog> {
               const SizedBox(height: Dimens.spacingXxxl),
               _buildActionButtons(context),
             ],
+          ),
           ),
         ),
       ),

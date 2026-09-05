@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magicepaperapp/constants/dimens.dart';
 import 'package:magicepaperapp/image_library/model/saved_image_model.dart';
 import 'package:magicepaperapp/l10n/app_localizations.dart';
@@ -39,18 +40,28 @@ class SharedDeleteConfirmationDialog extends StatelessWidget {
             if (image != null) image!,
           ];
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(
-        horizontal: Dimens.spacingL,
-        vertical: Dimens.spacingXxl,
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: Dimens.dialogMaxWidth,
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
+          Navigator.of(context).pop();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: Dimens.spacingL,
+          vertical: Dimens.spacingXxl,
         ),
-        child: SingleChildScrollView(
-          child: Container(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: Dimens.dialogMaxWidth,
+          ),
+          child: SingleChildScrollView(
+            child: Container(
             padding: const EdgeInsets.all(Dimens.spacingXxl),
             decoration: BoxDecoration(
               color: colorWhite,
@@ -75,6 +86,7 @@ class SharedDeleteConfirmationDialog extends StatelessWidget {
                 const SizedBox(height: Dimens.spacingXxl),
                 _buildActionButtons(context, images.length),
               ],
+            ),
             ),
           ),
         ),

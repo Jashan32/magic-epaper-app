@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magicepaperapp/theme/colors.dart';
 import 'package:image/image.dart' as img;
 import 'package:magicepaperapp/constants/dimens.dart';
@@ -422,9 +423,19 @@ class _TransferProgressDialogState extends State<TransferProgressDialog>
 
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(
-      position: _slideAnimation,
-      child: Dialog(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
+          Navigator.of(context).pop();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Dialog(
         backgroundColor: colorWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimens.radiusRound),
@@ -543,6 +554,7 @@ class _TransferProgressDialogState extends State<TransferProgressDialog>
               ],
             ],
           ),
+        ),
         ),
       ),
     );
