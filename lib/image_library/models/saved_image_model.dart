@@ -60,6 +60,8 @@ class SavedImage {
 
   bool get isQrTag => metadata?['qrTag'] is Map;
 
+  bool get isEmployee => metadata?['employee'] is Map;
+
   Map<String, dynamic>? get qrTagData {
     final raw = metadata?['qrTag'];
     return raw is Map ? Map<String, dynamic>.from(raw) : null;

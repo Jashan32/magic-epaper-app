@@ -15,6 +15,7 @@ import 'package:magicepaperapp/card_templates/qr_tag_form.dart';
 import 'package:magicepaperapp/card_templates/qr_tag_model.dart';
 import 'package:magicepaperapp/card_templates/contact_card_form.dart';
 import 'package:magicepaperapp/card_templates/contact_card_model.dart';
+import 'package:magicepaperapp/card_templates/employee_id_form.dart';
 import 'package:magicepaperapp/constants/color_constants.dart';
 import 'package:magicepaperapp/native_canvas/native_canvas_editor.dart';
 import 'package:magicepaperapp/native_canvas/models/canvas_document.dart';
@@ -250,6 +251,36 @@ class _ImageLibraryScreenState extends State<ImageLibraryScreen> {
     );
   }
 
+  Future<void> _editEmployee(SavedImage image) async {
+    final epd = _operationsService.getEpdFromImage(image);
+    final result = await Navigator.of(context).push<Uint8List>(
+      MaterialPageRoute(
+        builder: (_) => EmployeeIdForm(
+          width: epd.width,
+          height: epd.height,
+          device: epd,
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+
+    final imgLoader = context.read<ImageLoader>();
+    await imgLoader.updateImage(
+      bytes: result,
+      width: epd.width,
+      height: epd.height,
+    );
+    await imgLoader.saveFinalizedImageBytes(result);
+    if (!mounted) return;
+    _loadIntoImageEditor(
+      epd,
+      editingImageId: image.id,
+      initialFilterIndex: _savedFilterIndex(image),
+      initialFlipHorizontal: _savedFlag(image, 'flipHorizontal'),
+      initialFlipVertical: _savedFlag(image, 'flipVertical'),
+    );
+  }
+
   Future<void> _editImage(SavedImage image) async {
     if (image.isQrTag) {
       await _editQrTag(image);
@@ -259,6 +290,12 @@ class _ImageLibraryScreenState extends State<ImageLibraryScreen> {
       await _editContactCard(image);
       return;
     }
+
+    if (image.isEmployee) {
+      await _editEmployee(image);
+      return;
+    }
+
     final epd = _operationsService.getEpdFromImage(image);
     final weather = image.weatherTemplateData;
     if (weather != null) {

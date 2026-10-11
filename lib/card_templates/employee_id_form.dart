@@ -16,6 +16,7 @@ import 'package:magicepaperapp/utils/epd/display_device.dart';
 import 'package:magicepaperapp/utils/page_route_util.dart';
 import 'package:magicepaperapp/card_templates/barcode_scanner_util.dart';
 import 'package:magicepaperapp/view/widgets/common_scaffold_widget.dart';
+import 'package:magicepaperapp/card_templates/card_template_result.dart';
 
 AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
@@ -165,9 +166,23 @@ class _EmployeeIdFormState extends State<EmployeeIdForm> {
 
       if (!mounted) return;
       if (result is Uint8List) {
+        final templateResult = CardTemplateResult(
+          result,
+          metadata: {
+            'employee': {
+              'companyName': _employeeData.companyName,
+              'name': _employeeData.name,
+              'idNumber': _employeeData.idNumber,
+              'division': _employeeData.division,
+              'position': _employeeData.position,
+              'qrData': _employeeData.qrData,
+            },
+          },
+        );
+
         Navigator.of(context)
           ..pop()
-          ..pop(result);
+          ..pop(templateResult);
       } else if (result is String) {
         _handleEditRequest(result);
       }
